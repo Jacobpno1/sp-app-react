@@ -1,0 +1,143 @@
+.crumb-ctr{
+    display: flex;
+    flex-direction: row;
+    height: 87px;
+}
+
+.crumb-tile{
+    flex: 0 0 220px;    
+    display: flex;
+    flex-direction: row;    
+    margin: 7px;
+    border: solid 2px rgba(0, 114, 198, .7);
+    padding: 13px;    
+    justify-content: space-between;
+    color: rgba(0, 114, 198, 1);
+    background-color: transparent; 
+    text-align: left;   
+    transition: all ease .5s; 
+}
+.crumb-tile h2{
+    color: rgba(0, 114, 198, 1);
+}
+.crumb-tile.selection{
+    background-color: rgba(0, 114, 198, 1);
+    color: white;
+    cursor: pointer;
+    text-align: right;
+    transition: all ease .5s;
+}
+.crumb-tile.field-label h2{
+    color: rgba(0, 114, 198, 1);
+    /* margin-left: 15px; */
+}
+.crumb-tile .ng-hide-add {
+    transition: none;
+}
+.crumb-tile .ng-hide-prepare {
+    opacity: 0;
+}
+.crumb-tile.selection h2{
+    color: white;
+    margin-left: 15px;
+    font-size: 12pt;
+}
+.crumb-tile i{
+    font-size: 28pt;
+}
+.crumb-tile.selection:hover{
+    transition: background-color .2s;
+    background-color: rgba(0, 114, 198, .8);
+    border-color: rgba(0, 114, 198, 0);
+}
+.crumb-tile.selection.read-only{
+    color: rgba(0, 114, 198, 1);
+    border-color: rgba(0, 114, 198, .8);
+    background-color: transparent;    
+    transition: all ease .5s; 
+    cursor: default;
+    flex: 1 0 auto;
+}
+.crumb-tile.selection.read-only h2{
+    color: rgba(0, 114, 198, 1);
+}
+.crumb-tile.selection.read-only:hover{    
+    transition: none;    
+    background-color: transparent; 
+    border-color: rgba(0, 114, 198, .8);
+}
+.crumb-tile.ng-leave,
+.crumb-tile .ng-hide-remove,
+.crumb-tile .ng-hide-add{
+    transition: none;
+}
+
+.tile-box-ctr{
+    display: flex;
+    flex-flow: row wrap;
+    max-width: 1060px;
+}
+
+.tile-box{
+    flex: 0 0 220px;
+    height: 200px;
+    margin: 7px;
+    padding: 15px;
+    transition: background-color .2s;
+    background-color: rgba(0, 114, 198, 1);
+    color: white;
+    cursor: pointer;
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center; 
+}
+
+.tile-box.ng-enter{
+    opacity: 0;
+    /* padding-left: 30px ; */
+    transition: all ease 1s;
+}
+.tile-box.ng-enter-stagger {
+    transition-delay: 0.1s ;
+        -webkit-transition-delay: 0.1s ;
+    /*
+        FROM THE DOCUMENTATION:
+        In case the stagger doesn't work then these two values must be set
+        to 0 to avoid an accidental CSS inheritance.
+    */
+    transition-duration: 0s ;
+        -webkit-transition-duration: 0s ;
+}
+.tile-box.ng-enter-active {
+    opacity: 1.0 ;
+    /* padding-left: 0px ; */
+}
+.crumb-tile.ng-enter-prepare,
+.crumb-tile.ng-leave-prepare,
+.tile-box.ng-enter-prepare {
+  opacity: 0;
+}
+
+.tile-box:hover{
+    transition: background-color .2s;
+    background-color: rgba(0, 114, 198, .8);
+}
+.tile-box h2{
+    color: white;
+}
+.tile-box > h2 {
+    flex: 0 1 auto;        
+}
+.tile-box .ms-Icon{
+    transition: font-size .2s;
+    font-size:40pt;
+}
+.tile-box:hover .ms-Icon{
+    transition: font-size .2s;
+    font-size:50pt;
+}
+.tile-box-text{
+    flex: 0 1 50%; 
+    width: 190px;    
+}
