@@ -1,12 +1,12 @@
 {
   "name": "sp-app-react",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "React based Controls and Utilities for building applications in SharePoint",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",    
+    "build": "tsc",
     "lint": "tslint -p tsconfig.json",
     "prepare": "npm run build",
     "version": "git add -A src",
