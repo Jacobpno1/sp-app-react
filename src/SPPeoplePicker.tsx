@@ -3,8 +3,8 @@ import { NormalPeoplePicker, IPersonaProps, IBasePickerSuggestionsProps, Label, 
 import { useField, useFormikContext } from 'formik';
 import _ from 'lodash'
 import { SPListContext } from './SPList';
-import './SPApp.css'
 import { SPDisplayPerson } from './SPDisplayPerson';
+import { errorMessage } from './styles';
 declare var _spPageContextInfo: any;
 
 type SPPeoplePickerProps ={
@@ -238,7 +238,7 @@ export const SPPeoplePicker: React.FC<SPPeoplePickerProps> = ({name, label, mult
       {(meta.touched && meta.error) ? (
         <span id="TextFieldDescription2">
           <div role="alert">
-            <div className="ms-TextField-errorMessage errorMessage">
+            <div className="ms-TextField-errorMessage" style={errorMessage}>
               <span data-automation-id="error-message">{error && error.results ? error.results : error}</span>
             </div>
           </div>
