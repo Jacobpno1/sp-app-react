@@ -2,12 +2,16 @@
   "name": "sp-app-react",
   "version": "1.0.0",
   "description": "React based Controls and Utilities for building applications in SharePoint",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json",
+    "prepare" : "npm run build"
   },
-  "author": "Jacob Pettis",
-  "license": "ISC",
+  "files": ["lib/**/*"],
   "devDependencies": {
     "@types/react": "^16.8.0",
     "@types/react-dom": "^16.8.0",
@@ -32,5 +36,8 @@
   "peerDependencies": {
     "react": ">16.8.0 <17.0.0",
     "react-dom": ">16.8.0 <17.0.0"
-  }
+  },
+  "keywords": ["SharePoint", "Formik", "React", "FluentUI"],
+  "author": "Jacob Pettis",
+  "license": "ISC"
 }

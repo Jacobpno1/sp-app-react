@@ -13,6 +13,6 @@
     "downlevelIteration": true,
     "skipLibCheck": true
   },
-
-  "include": ["src", "typings/*.d.ts"]
+  "include": ["src", "typings/*.d.ts"],
+  "exclude": ["node_modules"]
 }
