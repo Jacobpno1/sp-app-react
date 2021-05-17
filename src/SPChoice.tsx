@@ -47,13 +47,22 @@ export function SPChoice(props:any){
   //   ? (typeof(meta.value) == "string" ? [meta.value] : (meta.value && meta.value.results) ? meta.value.results : null)
   //   : [field.value]
 
-
+  const renderReadOnlyMultiSelect = () => {
+    return props.displayAsList 
+    ? <ul style={{margin: 0, padding: 0, listStyle: "none"}}>
+      {field.value.results.map((v: string, i: number) => <li style={{marginBottom: 5}} key={i}>{v}</li>)}
+    </ul>          
+    : field.value.results.join(", ")
+  }
 
   return (
     <>{ props.readOnly 
       ?<div>
         <Label>{listProps ? listProps.label : props.name}</Label>
-        <Text>{isMultiSelect() ? field.value.results.join(", ") : field.value ? field.value.toString() : ""}</Text>
+        <Text>{isMultiSelect() 
+          ? renderReadOnlyMultiSelect()
+          : field.value ? field.value.toString() : ""}
+        </Text>
       </div>
       :<div>
         <Dropdown

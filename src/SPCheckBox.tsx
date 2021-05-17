@@ -20,8 +20,8 @@ export const SPCheckBox = (props:any)  => {
           ? 
             props.toggle ? <Toggle {...listProps} {...props} checked={field.value} onChange={_onChange} /> : <Checkbox {...listProps} {...props} checked={field.value} onChange={_onChange} />
           : <div>
-              <Label>{props.name}</Label>
-              <Text>{field.value}</Text>
+              <Label>{listProps ? listProps.label : props.name}</Label>
+              <Text>{field.value ? "Yes" : "No"}</Text>
             </div>
         }
       {(meta.touched && meta.error) ? (
