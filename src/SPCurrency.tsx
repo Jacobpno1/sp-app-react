@@ -49,7 +49,7 @@ export const SPCurrency = (props:SPCurrencyProps)  => {
           ? 
             <TextField {...listProps} {...props} errorMessage={error} onBlur={onBlur} onChange={onChange} value={stringValue} /> 
           : <div>
-              <Label>{listProps ? listProps.label : props.name}</Label>
+              <Label>{listProps && listProps.label ? listProps.label : props.label}</Label>
               <Text>{stringValue}</Text>
             </div>
         }

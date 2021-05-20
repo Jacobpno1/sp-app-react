@@ -17,7 +17,7 @@ export const SPTextField = (props:ITextFieldProps | IMaskedTextFieldProps)  => {
               <MaskedTextField {...field} {...listProps} {...props} errorMessage={error}/> 
             : <TextField {...field} {...listProps} {...props} errorMessage={error}/> 
           : <div>
-              <Label>{listProps ? listProps.label : props.name}</Label>
+              <Label>{listProps && listProps.label ? listProps.label : props.label}</Label>
               <Text>{field.value}</Text>
             </div>
         }
