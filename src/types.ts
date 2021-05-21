@@ -1,6 +1,7 @@
 export interface SharePointList {
   __metadata?: {
     etag?: string
+    [key:string]: any
   }
   ID?: number
   Title?: string
