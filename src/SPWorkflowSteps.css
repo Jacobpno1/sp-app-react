@@ -1,0 +1,24 @@
+.workflow-step{
+  color: #605e5c;
+  background-color: #ffffff;     
+  margin: 10px;
+  padding: 15px;
+  cursor: pointer;
+  max-width: 300px;
+  transition-property: background, border, border-color;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.23, 1);
+}
+
+.workflow-step:hover{
+  background-color: #f3f2f1;  
+}
+
+.active-step {
+  color: white;
+  background-color: #0078d4;
+}
+
+.active-step:hover {
+  background-color: #106ebe;
+}

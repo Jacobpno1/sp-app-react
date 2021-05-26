@@ -1,23 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Stack, DefaultEffects, Text, Icon } from '@fluentui/react';
+import './SPWorkflowSteps.css'
 
 export function SPWorkflowSteps(props:any){
 
-  const stepStyle:React.CSSProperties = {
-    color: '#605e5c',
-    backgroundColor: '#ffffff',
-    boxShadow: DefaultEffects.elevation8,    
-    margin: 10,
-    padding: 15,
-    cursor: "pointer",
-    maxWidth: 300
+  const stepStyle:React.CSSProperties = {    
+    boxShadow: DefaultEffects.elevation8,        
   }
-
-  const activeStepStyle:React.CSSProperties = {
-    ...stepStyle,
-    color: "white",
-    backgroundColor: "#106ebe"
-  }  
 
   const getActiveSteps = () => {
     return props.workflowSteps.filter((i:any) => i.condition ? i.condition(props.state) : true)
@@ -38,8 +27,8 @@ export function SPWorkflowSteps(props:any){
   return <>
     <Stack horizontal className="step-ctr">      
       {getActiveSteps().map((i:any, index:number) => <Stack key={index} horizontal verticalAlign="center">
-        <Stack style={i.name == props.currentStep ? activeStepStyle : stepStyle} onClick={() => props.onClick(i)} horizontal verticalAlign="center">
-          <Text style={{fontWeight: 600}}>
+        <Stack style={stepStyle} className={i.name == props.currentStep ? "workflow-step active-step" : "workflow-step"} onClick={() => props.onClick(i)} horizontal verticalAlign="center">
+          <Text style={{fontWeight: 600, color: i.name == props.currentStep ? "white" : "auto"}}>
             {i.name}
                                 
             {/* {isStepAfterCurrentStep(i.name) ? "+" : null}         */}
