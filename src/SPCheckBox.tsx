@@ -18,7 +18,7 @@ export const SPCheckBox = (props:any)  => {
       <div style={{marginTop: 5}}>
         { !props.readOnly 
           ? 
-            props.toggle ? <Toggle {...listProps} {...props} checked={field.value} onChange={_onChange} /> : <Checkbox {...listProps} {...props} checked={field.value} onChange={_onChange} />
+            props.toggle ? <Toggle {...listProps} {...props} checked={field.value} onChange={_onChange} /> : <Checkbox {...listProps} {...props} styles={{root: {marginTop:29}}} checked={field.value} onChange={_onChange} />
           : <div>
               <Label>{listProps ? listProps.label : props.name}</Label>
               <Text>{field.value ? "Yes" : "No"}</Text>
