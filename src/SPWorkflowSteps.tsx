@@ -52,7 +52,7 @@ export function SPWorkflowSteps(props:any){
   return <>
     <Stack horizontal className="step-ctr">      
       {getActiveSteps().map((i:any, index:number) => 
-        <SPWorkflowStep key={index} item={i} index={index} isStepBeforeCurrentStep={isStepBeforeCurrentStep} getActiveSteps={getActiveSteps}></SPWorkflowStep>
+        <SPWorkflowStep key={index} item={i} index={index} isStepBeforeCurrentStep={isStepBeforeCurrentStep} getActiveSteps={getActiveSteps} parentProps={props}></SPWorkflowStep>
         // <Stack key={index} horizontal verticalAlign="center">
         //   <Stack style={i.name == props.currentStep ? styles.workflowStep : {...styles.workflowStep, ...styles.activeStep}} onClick={() => props.onClick(i)} horizontal verticalAlign="center">
         //     <Text style={{fontWeight: 600, color: i.name == props.currentStep ? "white" : "auto"}}>
@@ -72,17 +72,16 @@ export function SPWorkflowSteps(props:any){
 }
 
 let SPWorkflowStep = (props:any) => {
-  const {item,index, isStepBeforeCurrentStep, getActiveSteps} = props
+  const {item, index, isStepBeforeCurrentStep, getActiveSteps, parentProps} = props
   return <>
     <Stack key={index} horizontal verticalAlign="center">
-        <Stack style={item.name == props.currentStep ? styles.workflowStep : {...styles.workflowStep, ...styles.activeStep}} onClick={() => props.onClick(item)} horizontal verticalAlign="center">
-          <Text style={{fontWeight: 600, color: item.name == props.currentStep ? "white" : "auto"}}>
-            {item.name}
-                                
+        <Stack style={item.name == parentProps.currentStep ? styles.workflowStep : {...styles.workflowStep, ...styles.activeStep}} onClick={() => parentProps.onClick(item)} horizontal verticalAlign="center">
+          <Text style={{fontWeight: 600, color: item.name == parentProps.currentStep ? "white" : "auto"}}>
+            {item.name}                                
             {/* {isStepAfterCurrentStep(item.name) ? "+" : null}         */}
           </Text>
-          {item.name == props.currentStepAssigned ? <Icon iconName="Error" style={{marginLeft:10}}></Icon> : null}
-          {item.name == props.currentStep && props.currentStepRejected ? <Icon iconName="ErrorBadge" style={{marginLeft:10}}></Icon> : null}
+          {item.name == parentProps.currentStepAssigned ? <Icon iconName="Error" style={{marginLeft:10}}></Icon> : null}
+          {item.name == parentProps.currentStep && parentProps.currentStepRejected ? <Icon iconName="ErrorBadge" style={{marginLeft:10}}></Icon> : null}
           {isStepBeforeCurrentStep(item.name) ? <Icon iconName="Accept" style={{color: "green", fontWeight: 600, marginLeft:10}}></Icon> : null}
         </Stack>
         {index+1 != getActiveSteps().length ? <Icon iconName="ChevronRight"></Icon> : null}
