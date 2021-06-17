@@ -27,7 +27,7 @@ const styles = {
   } as CSSProperties  
 }
 
-export default Radium(function SPWorkflowSteps(props:any){
+export function SPWorkflowSteps(props:any){
 
   const stepStyle:React.CSSProperties = {    
     boxShadow: DefaultEffects.elevation8,        
@@ -51,19 +51,43 @@ export default Radium(function SPWorkflowSteps(props:any){
 
   return <>
     <Stack horizontal className="step-ctr">      
-      {getActiveSteps().map((i:any, index:number) => <Stack key={index} horizontal verticalAlign="center">
-        <Stack style={i.name == props.currentStep ? styles.workflowStep : {...styles.workflowStep, ...styles.activeStep}} onClick={() => props.onClick(i)} horizontal verticalAlign="center">
-          <Text style={{fontWeight: 600, color: i.name == props.currentStep ? "white" : "auto"}}>
-            {i.name}
-                                
-            {/* {isStepAfterCurrentStep(i.name) ? "+" : null}         */}
-          </Text>
-          {i.name == props.currentStepAssigned ? <Icon iconName="Error" style={{marginLeft:10}}></Icon> : null}
-          {i.name == props.currentStep && props.currentStepRejected ? <Icon iconName="ErrorBadge" style={{marginLeft:10}}></Icon> : null}
-          {isStepBeforeCurrentStep(i.name) ? <Icon iconName="Accept" style={{color: "green", fontWeight: 600, marginLeft:10}}></Icon> : null}
-        </Stack>
-        {index+1 != getActiveSteps().length ? <Icon iconName="ChevronRight"></Icon> : null}
-      </Stack> )}      
+      {getActiveSteps().map((i:any, index:number) => 
+        <SPWorkflowStep key={index} item={i} index={index} isStepBeforeCurrentStep={isStepBeforeCurrentStep} getActiveSteps={getActiveSteps}></SPWorkflowStep>
+        // <Stack key={index} horizontal verticalAlign="center">
+        //   <Stack style={i.name == props.currentStep ? styles.workflowStep : {...styles.workflowStep, ...styles.activeStep}} onClick={() => props.onClick(i)} horizontal verticalAlign="center">
+        //     <Text style={{fontWeight: 600, color: i.name == props.currentStep ? "white" : "auto"}}>
+        //       {i.name}
+                                  
+        //       {/* {isStepAfterCurrentStep(i.name) ? "+" : null}         */}
+        //     </Text>
+        //     {i.name == props.currentStepAssigned ? <Icon iconName="Error" style={{marginLeft:10}}></Icon> : null}
+        //     {i.name == props.currentStep && props.currentStepRejected ? <Icon iconName="ErrorBadge" style={{marginLeft:10}}></Icon> : null}
+        //     {isStepBeforeCurrentStep(i.name) ? <Icon iconName="Accept" style={{color: "green", fontWeight: 600, marginLeft:10}}></Icon> : null}
+        //   </Stack>
+        //   {index+1 != getActiveSteps().length ? <Icon iconName="ChevronRight"></Icon> : null}
+        // </Stack> 
+      )}      
     </Stack>
   </>
-})
+}
+
+let SPWorkflowStep = (props:any) => {
+  const {item,index, isStepBeforeCurrentStep, getActiveSteps} = props
+  return <>
+    <Stack key={index} horizontal verticalAlign="center">
+        <Stack style={item.name == props.currentStep ? styles.workflowStep : {...styles.workflowStep, ...styles.activeStep}} onClick={() => props.onClick(item)} horizontal verticalAlign="center">
+          <Text style={{fontWeight: 600, color: item.name == props.currentStep ? "white" : "auto"}}>
+            {item.name}
+                                
+            {/* {isStepAfterCurrentStep(item.name) ? "+" : null}         */}
+          </Text>
+          {item.name == props.currentStepAssigned ? <Icon iconName="Error" style={{marginLeft:10}}></Icon> : null}
+          {item.name == props.currentStep && props.currentStepRejected ? <Icon iconName="ErrorBadge" style={{marginLeft:10}}></Icon> : null}
+          {isStepBeforeCurrentStep(item.name) ? <Icon iconName="Accept" style={{color: "green", fontWeight: 600, marginLeft:10}}></Icon> : null}
+        </Stack>
+        {index+1 != getActiveSteps().length ? <Icon iconName="ChevronRight"></Icon> : null}
+      </Stack>
+  </>
+}
+
+SPWorkflowStep = Radium(SPWorkflowStep)
