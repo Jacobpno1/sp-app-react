@@ -1,8 +1,33 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { Stack, DefaultEffects, Text, Icon } from '@fluentui/react';
-import './SPWorkflowSteps.css'
+import Radium from 'radium';
 
-export function SPWorkflowSteps(props:any){
+const styles = {
+  workflowStep: {
+    boxShadow: DefaultEffects.elevation8,
+    color: "#605e5c",    
+    backgroundColor: "#ffffff",        
+    margin: "10px",
+    padding: "15px",
+    cursor: "pointer",
+    maxWidth: "300px",
+    transitionProperty: "background, border, border-color",
+    transitionDuration: "200ms",
+    transitionTimingFunction: "cubic-bezier(0.4, 0, 0.23, 1)",
+    ':hover': {
+      backgroundColor: "#f3f2f1"
+    } as CSSProperties
+  } as CSSProperties,
+  activeStep: {
+    color: "white",
+    backgroundColor: "#0078d4",
+    ":hover": {
+      backgroundColor: "#106ebe"
+    } as CSSProperties
+  } as CSSProperties  
+}
+
+export default Radium(function SPWorkflowSteps(props:any){
 
   const stepStyle:React.CSSProperties = {    
     boxShadow: DefaultEffects.elevation8,        
@@ -27,7 +52,7 @@ export function SPWorkflowSteps(props:any){
   return <>
     <Stack horizontal className="step-ctr">      
       {getActiveSteps().map((i:any, index:number) => <Stack key={index} horizontal verticalAlign="center">
-        <Stack style={stepStyle} className={i.name == props.currentStep ? "workflow-step active-step" : "workflow-step"} onClick={() => props.onClick(i)} horizontal verticalAlign="center">
+        <Stack style={i.name == props.currentStep ? styles.workflowStep : {...styles.workflowStep, ...styles.activeStep}} onClick={() => props.onClick(i)} horizontal verticalAlign="center">
           <Text style={{fontWeight: 600, color: i.name == props.currentStep ? "white" : "auto"}}>
             {i.name}
                                 
@@ -41,4 +66,4 @@ export function SPWorkflowSteps(props:any){
       </Stack> )}      
     </Stack>
   </>
-}
+})
