@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
 import { DatePicker, IDatePickerStrings, mergeStyleSets, DayOfWeek, Button, IconButton, Stack, FontWeights, ActionButton, Text } from '@fluentui/react';
 import { useField } from 'formik';
-import { SharePointAttachment, SharePointAttachments } from './types';
-import { SPListContext } from './SPList';
+import { SharePointAttachment, SharePointAttachments } from '../types';
+import { SPListContext } from '../SPList';
+import { useSPField } from '../hooks/useSPField';
 
 interface SPAttachmentsProps {
   list?: string,
@@ -12,9 +13,11 @@ interface SPAttachmentsProps {
 }
 
 export const SPAttachments = ({list, readOnly, label, required}: SPAttachmentsProps)  => {
-  const listContext = useContext(SPListContext);  
+  // const listContext = useContext(SPListContext);  
+  // list = listContext ? listContext.listName : list
+  // const [field, meta, helpers] = useField("AttachmentFiles");
+  const [field, meta, helpers, spProps, listContext] = useSPField({name: "AttachmentFiles"}); 
   list = listContext ? listContext.listName : list
-  const [field, meta, helpers] = useField("AttachmentFiles");
   const error : any = meta.error;
   
   function _onChange(event: React.ChangeEvent<HTMLInputElement>){    
@@ -75,6 +78,8 @@ export const SPAttachments = ({list, readOnly, label, required}: SPAttachmentsPr
     return field.value.results.filter((i:SharePointAttachment) => { return !i.__metadata.deleted })
   }
 
+  // return <div>TEST</div>
+
   return(list 
     ? <Stack>
       <Text variant="large" styles={{root: { fontWeight: FontWeights.semibold }}}>
@@ -99,7 +104,7 @@ export const SPAttachments = ({list, readOnly, label, required}: SPAttachmentsPr
         <span id="TextFieldDescription2">
           <div role="alert">
             <div className="ms-TextField-errorMessage errorMessage">
-              <span data-automation-id="error-message">{error.results ? error.results : error}</span>
+              {/* <span data-automation-id="error-message">{error.results ? error.results : error}</span> */}
             </div>
           </div>
         </span>

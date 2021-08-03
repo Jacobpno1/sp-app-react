@@ -1,3 +1,7 @@
+import * as Yup from 'yup';
+import { OptionalArraySchema } from 'yup/lib/array';
+import { AnyObject } from 'yup/lib/object';
+
 export interface SharePointList {
   __metadata?: {
     etag?: string
@@ -91,4 +95,27 @@ export interface SPTask {
 export interface SPTaskModalFormikValues{
   task: SPTask,
   form: any
+}
+
+export interface SPAppSchema{
+
+}
+
+export interface SPListSchema{
+  name: string
+  fields: SPFieldSchema[]
+  parent?: string  
+  primary?: boolean
+  defaultItems?: number
+  validation?: (values:any, yupArray:OptionalArraySchema<Yup.AnySchema<any, any, any>, AnyObject, any[] | undefined>) => any
+}
+
+export interface SPFieldSchema{
+  name: string
+  label?: string
+  required?: boolean
+  validation?: (values:any) => any
+  defaultValue?: any
+  foreignKey?: boolean
+  primaryKey?: boolean
 }

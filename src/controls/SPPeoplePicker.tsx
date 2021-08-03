@@ -2,9 +2,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { NormalPeoplePicker, IPersonaProps, IBasePickerSuggestionsProps, Label, IBasePickerStyles, Stack } from '@fluentui/react';
 import { useField, useFormikContext } from 'formik';
 import _ from 'lodash'
-import { SPListContext } from './SPList';
-import { SPDisplayPerson } from './SPDisplayPerson';
-import { errorMessage } from './styles';
+import { SPListContext } from '../SPList';
+import { SPDisplayPerson } from '../SPDisplayPerson';
+import { errorMessage } from '../styles';
+import { useSPField } from '../hooks/useSPField';
 declare var _spPageContextInfo: any;
 
 type SPPeoplePickerProps ={
@@ -48,14 +49,16 @@ const suggestionProps: IBasePickerSuggestionsProps = {
 };
 
 export const SPPeoplePicker: React.FC<SPPeoplePickerProps> = ({name, label, multiple, required, disabled, readOnly}) => {
-  const listContext = useContext(SPListContext);
-  const listProps = (listContext && listContext.getFieldProps && name) ? listContext.getFieldProps(name.replace("Id","")) : {}
-  if (listProps && listProps.label)
-    label = listProps.label
+  // const listContext = useContext(SPListContext);
+  // const listProps = (listContext && listContext.getFieldProps && name) ? listContext.getFieldProps(name.replace("Id","")) : {}
+  
   const defaultSelectedPersonsa: SPPickerPersonaProps[] = [];
   const [selectedPersonas, setSelectedPersonas] = useState(defaultSelectedPersonsa);
 
-  const [field, meta, helpers] = useField(name);  
+  const [field, meta, helpers, spProps] = useSPField({name});    
+  if (spProps && spProps.label)
+    label = spProps.label
+  //const [field, meta, helpers] = useField(name);  
   
   useEffect(() => {  
     let newSelectedPersonas = [...selectedPersonas];  
@@ -197,7 +200,7 @@ export const SPPeoplePicker: React.FC<SPPeoplePickerProps> = ({name, label, mult
 
   return (readOnly
     ? <div>
-      <Label>{listProps ? listProps.label : name}</Label>
+      <Label>{spProps ? spProps.label : name}</Label>
       {multiple 
         ? <Stack>
           {field.value.results.map((i:number) => <SPDisplayPerson userId={i}></SPDisplayPerson>)}

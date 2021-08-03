@@ -1,25 +1,36 @@
-import { ITextFieldProps, Text, Dropdown, IDropdownOption, IDropdownStyles, DropdownMenuItemType, Label } from "@fluentui/react";
+import { ITextFieldProps, Text, Dropdown, IDropdownOption, IDropdownStyles, DropdownMenuItemType, Label, IDropdownProps } from "@fluentui/react";
 import { useField, useFormikContext } from "formik";
 import React, { useContext } from "react";
-import { SPListContext } from "./SPList";
+import { useSPField } from "../hooks/useSPField";
+import { SPListContext } from "../SPList";
 
 const dropdownStyles: Partial<IDropdownStyles> = {
   dropdown: { width: 400 },
 };
 
-export function SPChoice(props:any){
-  const [field, meta, helpers] = useField(props.name);
-  const formikContext = useFormikContext();
+interface SPChoiceProps extends Partial<IDropdownProps> {
+  name: string
+  multiple?: boolean
+  displayAsList? : boolean
+  readOnly?: boolean
+  options?: any
+}
+
+
+export function SPChoice(props:SPChoiceProps){
+  // const [field, meta, helpers] = useField(props.name);
+  const [field, meta, helpers, spProps] = useSPField(props);          
+  // const formikContext = useFormikContext();
   const error : string | undefined = meta.touched && meta.error && typeof(meta.error) == 'string' ? meta.error : undefined;
-  const listContext = useContext(SPListContext);
-  const listProps = (listContext && listContext.getFieldProps && props.name) ? listContext.getFieldProps(props.name) : {}
+  // const listContext = useContext(SPListContext);
+  // const listProps = (listContext && listContext.getFieldProps && props.name) ? listContext.getFieldProps(props.name) : {}
 
   const _onDismiss = () => {
     helpers.setTouched(true);
   }
 
   const isMultiSelect = () => {
-    return props.multiSelect || (listProps && listProps.multiSelect)        
+    return props.multiple || (spProps && spProps.multiSelect)        
   }
 
   const _onChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined, index?: number | undefined): void => {    
@@ -58,7 +69,7 @@ export function SPChoice(props:any){
   return (
     <>{ props.readOnly 
       ?<div>
-        <Label>{listProps ? listProps.label : props.name}</Label>
+        <Label>{spProps ? spProps.label : props.name}</Label>
         <Text>{isMultiSelect() 
           ? renderReadOnlyMultiSelect()
           : field.value ? field.value.toString() : ""}
@@ -67,8 +78,7 @@ export function SPChoice(props:any){
       :<div>
         <Dropdown
           onDismiss={_onDismiss}          
-          {...listProps}
-          {...props}
+          {...spProps}
           onChange={_onChange}
           onBlur={_onBlur}
           selectedKeys={(isMultiSelect() && field.value && field.value.results) ? field.value.results : undefined}

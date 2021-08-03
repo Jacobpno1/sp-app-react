@@ -4,7 +4,7 @@ import { useId } from '@uifabric/react-hooks';
 import { SPDisplayPerson } from './SPDisplayPerson';
 import { MultiPersonField, WorkflowStep, SPTask, SPTaskModalFormikValues } from './types';
 import { Formik } from 'formik';
-import { SPTextField } from './SPTextField';
+import { SPTextField } from './controls/SPTextField';
 import { formatISODate } from './SPServices';
 
 declare var _spPageContextInfo: any;

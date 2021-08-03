@@ -1,7 +1,8 @@
 import {  Label, Text, SpinButton, ISpinButtonProps, TextField } from "@fluentui/react";
 import { useField } from "formik";
 import React, { useContext, useState, useEffect } from "react";
-import { SPListContext } from "./SPList";
+import { useSPField } from "../hooks/useSPField";
+import { SPListContext } from "../SPList";
 
 interface SPCurrencyProps extends ISpinButtonProps {
   name: string
@@ -10,14 +11,15 @@ interface SPCurrencyProps extends ISpinButtonProps {
 }
 
 export const SPCurrency = (props:SPCurrencyProps)  => {
-  const listContext = useContext(SPListContext);
-  const listProps = (listContext && listContext.getFieldProps && props.name) ? listContext.getFieldProps(props.name) : {}    
+  // const listContext = useContext(SPListContext);
+  // const listProps = (listContext && listContext.getFieldProps && props.name) ? listContext.getFieldProps(props.name) : {}    
 
   if (props.name){
-    const [field, meta, helpers] = useField(props.name);        
+    // const [field, meta, helpers] = useField(props.name);        
+    const [field, meta, helpers, spProps] = useSPField(props); 
     const error : string | undefined = meta.touched && meta.error && typeof(meta.error) == 'string' ? meta.error : undefined;    
     const [stringValue, setStringValue] = useState("")
-
+        
     useEffect(() => {      
       setStringValue(field.value ? "$" + field.value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "")
     }, [field.value])
@@ -47,9 +49,9 @@ export const SPCurrency = (props:SPCurrencyProps)  => {
       <div>
         { !props.readOnly 
           ? 
-            <TextField {...listProps} {...props} errorMessage={error} onBlur={onBlur} onChange={onChange} value={stringValue} /> 
+            <TextField {...spProps} errorMessage={error} onBlur={onBlur} onChange={onChange} value={stringValue} /> 
           : <div>
-              <Label>{listProps && listProps.label ? listProps.label : props.label}</Label>
+              <Label>{spProps && spProps.label ? spProps.label : props.label}</Label>
               <Text>{stringValue}</Text>
             </div>
         }

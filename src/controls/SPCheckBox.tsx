@@ -1,13 +1,24 @@
 import { ITextFieldProps, TextField, Label, Text, MaskedTextField, Checkbox, Toggle } from "@fluentui/react";
 import { useField } from "formik";
 import React, { useContext } from "react";
-import { SPListContext } from "./SPList";
+import { useSPField } from "../hooks/useSPField";
+import { SPListContext } from "../SPList";
+
+// const useSPField = (props: any) => {
+//   const listContext = useContext(SPListContext);
+//   const listProps = (listContext && listContext.getFieldProps && props.name) ? listContext.getFieldProps(props.name) : {}
+//   const fieldProps = {...props, name: listProps.name ? listProps.name : props.name}
+//   const [field, meta, helpers] = useField(listProps !== {} ? listProps.name : props.name); 
+//   return [field, meta, helpers, {...listProps, ...fieldProps}]
+// }
 
 export const SPCheckBox = (props:any)  => {
-  const listContext = useContext(SPListContext);
-  const listProps = (listContext && listContext.getFieldProps && props.name) ? listContext.getFieldProps(props.name) : {}
+  // const listContext = useContext(SPListContext);
+  // const listProps = (listContext && listContext.getFieldProps && props.name) ? listContext.getFieldProps(props.name) : {}
+  // const fieldProps = {...props, name: listProps.name ? listProps.name : props.name}
+
   if (props.name){
-    const [field, meta, helpers] = useField(props.name);        
+    const [field, meta, helpers, spProps] = useSPField(props);        
     const error : string | undefined = meta.touched && meta.error && typeof(meta.error) == 'string' ? meta.error : undefined;
 
     const _onChange = (ev?: React.FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => {
@@ -18,9 +29,9 @@ export const SPCheckBox = (props:any)  => {
       <div style={{marginTop: 5}}>
         { !props.readOnly 
           ? 
-            props.toggle ? <Toggle {...listProps} {...props} checked={field.value} onChange={_onChange} /> : <Checkbox {...listProps} {...props} styles={{root: {marginTop:29}}} checked={field.value} onChange={_onChange} />
+            props.toggle ? <Toggle {...spProps} checked={field.value} onChange={_onChange} /> : <Checkbox {...spProps} styles={{root: {marginTop:29}}} checked={field.value} onChange={_onChange} />
           : <div>
-              <Label>{listProps ? listProps.label : props.name}</Label>
+              <Label>{spProps ? spProps.label : props.name}</Label>
               <Text>{field.value ? "Yes" : "No"}</Text>
             </div>
         }

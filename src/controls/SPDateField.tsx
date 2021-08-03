@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
 import { Text, DatePicker, IDatePickerStrings, mergeStyleSets, DayOfWeek, Dropdown, IDropdownOption, Stack, Label } from '@fluentui/react';
 import { useField, useFormikContext } from 'formik';
-import { SPListContext } from './SPList';
-import { SPDisplayDate } from './SPDisplayDate';
+import { SPListContext } from '../SPList';
+import { SPDisplayDate } from '../SPDisplayDate';
+import { useSPField } from '../hooks/useSPField';
 //import { props } from 'bluebird';
 
 interface SPDateFieldProps {
@@ -18,11 +19,12 @@ interface SPDateFieldProps {
 }
 
 export const SPDateField = ({ label, name, required, disabled, onSelectDate, showTime, minDate, maxDate, readOnly } : SPDateFieldProps)  => {
-  const listContext = useContext(SPListContext);
-  const listProps = (listContext && listContext.getFieldProps && name) ? listContext.getFieldProps(name) : {}
-  if (listProps && listProps.label)
-    label = listProps.label
-  const [field, meta, helpers] = useField(name);
+  const [field, meta, helpers, spProps] = useSPField({name});  
+  // const listContext = useContext(SPListContext);
+  // const listProps = (listContext && listContext.getFieldProps && name) ? listContext.getFieldProps(name) : {}
+  if (spProps && spProps.label)
+    label = spProps.label
+  // const [field, meta, helpers] = useField(name);
   const error : string | undefined = meta.touched && meta.error && typeof(meta.error) == 'string' ? meta.error : undefined;
   const controlClass = mergeStyleSets({
     control: {

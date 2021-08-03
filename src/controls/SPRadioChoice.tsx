@@ -1,13 +1,15 @@
 import { ITextFieldProps, TextField, Dropdown, IDropdownOption, IDropdownStyles, DropdownMenuItemType, ChoiceGroup } from "@fluentui/react";
 import { useField } from "formik";
 import React from "react";
+import { useSPField } from "../hooks/useSPField";
 
 const dropdownStyles: Partial<IDropdownStyles> = {
   dropdown: { width: 300 },
 };
 
 export function SPRadioChoice(props:any){
-  const [field, meta, helpers] = useField(props.name);
+  const [field, meta, helpers, spProps] = useSPField(props);  
+  // const [field, meta, helpers] = useField(props.name);
   const error : string | undefined = meta.touched && meta.error && typeof(meta.error) == 'string' ? meta.error : undefined;
 
   const _onDismiss = () => {
@@ -20,7 +22,7 @@ export function SPRadioChoice(props:any){
 
   return (
       <div>
-        <ChoiceGroup onDismiss={_onDismiss} onChange={_onChange} selectedKey={field.value} {...props} placeholder="Select an option" styles={dropdownStyles}/>
+        <ChoiceGroup onDismiss={_onDismiss} onChange={_onChange} selectedKey={field.value} {...spProps} placeholder="Select an option" styles={dropdownStyles}/>
         {(meta.touched && meta.error) ? (
         <span id="TextFieldDescription2">
           <div role="alert">
