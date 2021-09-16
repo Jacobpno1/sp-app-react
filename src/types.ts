@@ -1,3 +1,4 @@
+import { FormikProps } from 'formik';
 import * as Yup from 'yup';
 import { OptionalArraySchema } from 'yup/lib/array';
 import { AnyObject } from 'yup/lib/object';
@@ -65,7 +66,12 @@ export interface HyperlinkField{
 export interface WorkflowStep{
   name: string;
   description?: string;
-  actions?: (state: any) => Promise<any>;
+  // actions?: (...args: any[]) => Promise<any>;
+  actions?: (...args: any[]) => any;
+  // actions?: <Effects>(...args: any[]) => {
+  //   values: any,
+  //   effects: Effects
+  // };
   outcomes?: WorkflowStepOutcome[];
   validationSchema?: any;
   condition?: (state: any) => boolean;
@@ -75,21 +81,23 @@ export interface WorkflowStep{
 
 export interface WorkflowStepOutcome{
   name: string;
-  actions: (state: any, setState: any, values: any, stepName?:string) => Promise<any>;
+  actions: (...args: any[]) => any;
   dismissModal?: boolean
 }
 
 export interface SPTask {
   [key:string]: any
-  taskName?: string | undefined;
-  taskKey?: number | undefined;
-  stepKey?: string | undefined;
-  assignedToId?: MultiPersonField | undefined;
-  completedById?: number | undefined
-  completedDate?: string | undefined
-  completed?: boolean | undefined;
-  outcome?: string | undefined;
+  taskName?: string
+  taskKey?: number
+  taskIndex: number
+  stepKey?: string
+  assignedToId?: MultiPersonField
+  completedById?: number
+  completedDate?: string
+  completed?: boolean
+  outcome?: string
   comments: string;
+  active: boolean
 }
 
 export interface SPTaskModalFormikValues{
@@ -118,4 +126,10 @@ export interface SPFieldSchema{
   defaultValue?: any
   foreignKey?: boolean
   primaryKey?: boolean
+}
+
+export interface SPAppBag {
+  formikBag: FormikProps<any>;
+  saveApp: (listName?: string | undefined | null, valuesOverride?: any) => Promise<any>
+  deleteApp: (listName?: string | undefined) => Promise<void>;
 }

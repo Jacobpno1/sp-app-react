@@ -21,7 +21,7 @@ interface SPAppProps {
   children?:
     | ((props: {
       formikBag:FormikProps<any>
-      saveApp: (listName?: string | undefined) => Promise<any>
+      saveApp: (listName?: string | undefined | null) => Promise<any>
       deleteApp: (listName?: string | undefined) => Promise<void>
     }) => React.ReactNode)
     | React.ReactNode;
@@ -195,7 +195,7 @@ export function SPApp({spAppSchema, formID, children}: SPAppProps){
       case "Integer": 
       case "Number": 
       case "User":
-        return Yup.number().required("This field cannot be blank") 
+        return Yup.mixed().required("This field cannot be blank") 
       case "MultiChoice":
       case "UserMulti":
         return Yup.object().shape({
@@ -214,11 +214,15 @@ export function SPApp({spAppSchema, formID, children}: SPAppProps){
     return field.Required || required ? getYupType(field.TypeAsString) : Yup.mixed()
   }
 
-  const validationSchema = Yup.lazy((values:any) => {    
+  const validationSchema = Yup.lazy((values:any) => {       
     return Yup.object().shape(Object.fromEntries(spAppSchema.map(list => {
-      const fieldsValidation = Object.fromEntries(list.fields.map(field => [field.name, field.validation //if field validation function provided
-        ? field.validation(values) 
-        : getSPListFieldValidation(list.name, field.name, field.required)
+      const fieldsValidation = Object.fromEntries(list.fields.map(field => [
+        fieldIsUserField(list.name, field.name, state.lists) 
+          ? `${field.name}Id` 
+          : field.name,
+        field.validation //if field validation function provided
+          ? field.validation(values) 
+          : getSPListFieldValidation(list.name, field.name, field.required)
       ]))
       return [list.name, list.parent //If Child List
         ? list.validation //if list validation function provided
@@ -268,8 +272,8 @@ export function SPApp({spAppSchema, formID, children}: SPAppProps){
 
         const {values, setValues} = formikBag
         
-        const saveApp = async (listName?: string) => {     
-          let formikValues = {...values}     
+        const saveApp = async (listName?: string | undefined | null, valuesOverride?: any) => {     
+          let formikValues = valuesOverride ? {...valuesOverride} : {...values}     
           try {  
             const primaryListSchema = spAppSchema.filter(v => v.primary)[0]
             if (!primaryListSchema) throw ("SPAppSchema Error: No primary list found in spAppSchema array.")
@@ -287,7 +291,7 @@ export function SPApp({spAppSchema, formID, children}: SPAppProps){
                   return [listName, (await Promise.all(data.map(async item => {
                     let newItem = {...item}
                     //Delete item if its been marked as deleted
-                    if (item.ID && item.__metadata.deleted){
+                    if (item.ID && item.__metadata && item.__metadata.deleted){
                       await pnpLists.getByTitle(listName).items.getById(item.ID).delete()
                       return item
                     }
@@ -300,7 +304,7 @@ export function SPApp({spAppSchema, formID, children}: SPAppProps){
                     //else Create if item does not exist
                     else newItem = {...item, ID: (await pnpLists.getByTitle(listName).items.add(resetNullValues(newItem))).data.ID}
                     
-                    if (newItem.AttachmentFiles && newItem.AttachmentFiles.results && formID)
+                    if (newItem.AttachmentFiles && newItem.AttachmentFiles.results && newItem.ID)
                       newItem.AttachmentFiles = {results: await saveAttachments(newItem.AttachmentFiles.results, pnpLists.getByTitle(listName).items.getById(item.ID))}  
                     
                     return newItem
@@ -308,8 +312,8 @@ export function SPApp({spAppSchema, formID, children}: SPAppProps){
                 else if (typeof data === 'object'){
                   await pnpLists.getByTitle(listName).items.getById(data.ID).update(resetNullValues(data))
                   let newData = {...data}
-                  if (data.AttachmentFiles && data.AttachmentFiles.results && formID)
-                    newData.AttachmentFiles = {results: await saveAttachments(data.AttachmentFiles.results, pnpLists.getByTitle(listName).items.getById(formID))}                   
+                  if (data.AttachmentFiles && data.AttachmentFiles.results && data.ID)
+                    newData.AttachmentFiles = {results: await saveAttachments(data.AttachmentFiles.results, pnpLists.getByTitle(listName).items.getById(data.ID))}                   
                   return [listName, newData]
                 }
                 else throw (`Formik Value ${listName} is neither Array or Object and cannot be saved.`)
@@ -355,7 +359,7 @@ export function SPApp({spAppSchema, formID, children}: SPAppProps){
           if (!newValues[listName].includes(item)) throw "Item not found in list array."
 
           if (item.ID)
-            newValues[listName][index].__metadata.deleted = true
+            newValues[listName][index] = {...newValues[listName][index], __metadata: { deleted: true}}
           else
              newValues[listName].splice(index,1)  
           setValues(newValues)        

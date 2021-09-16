@@ -60,7 +60,7 @@ export const SPPeoplePicker: React.FC<SPPeoplePickerProps> = ({name, label, mult
     label = spProps.label
   //const [field, meta, helpers] = useField(name);  
   
-  useEffect(() => {  
+  useEffect(() => {
     let newSelectedPersonas = [...selectedPersonas];  
     if (((field.value && typeof(field.value) == "number") || (field.value && field.value.results && field.value.results.length > 0)) && selectedPersonas.length === 0){
       const users = field.value.results || [field.value]
@@ -87,7 +87,7 @@ export const SPPeoplePicker: React.FC<SPPeoplePickerProps> = ({name, label, mult
         setSelectedPersonas(newSelectedPersonas)
       });            
     }
-  });
+  }, [field.value]);
 
   const _onFilterChanged= (filterText: string): IPersonaProps[] | Promise<IPersonaProps[]> => {
     if (filterText && filterText.length > 2) {

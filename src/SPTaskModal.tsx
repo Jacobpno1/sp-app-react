@@ -3,24 +3,23 @@ import { Text, Stack, Modal, mergeStyleSets, getTheme, IconButton, FontWeights, 
 import { useId } from '@uifabric/react-hooks';
 import { SPDisplayPerson } from './SPDisplayPerson';
 import { MultiPersonField, WorkflowStep, SPTask, SPTaskModalFormikValues } from './types';
-import { Formik } from 'formik';
+import { Formik, useField } from 'formik';
 import { SPTextField } from './controls/SPTextField';
 import { formatISODate } from './SPServices';
 
 declare var _spPageContextInfo: any;
 
 interface SPTaskModalState {
-  loadingTaskKey?: number;
+  loadingTaskIndex?: number;
   error?: string
 }
 
-interface SPTaskModalProps {
-  state: any,
-  setState: any, 
+interface SPTaskModalProps {  
+  isOpen: boolean
   workflowStep?: WorkflowStep,
-  tasks: SPTask[]
-  defaultValues: SPTaskModalFormikValues
+  tasks: SPTask[]  
   hideModal: any
+  onOutcomeClick: (outcome: any, task: SPTask, hideModal: any, workflowStep?: WorkflowStep) => any
 }
 
 const taskStyle: React.CSSProperties | undefined = {
@@ -34,23 +33,22 @@ export function SPTaskModal(props:SPTaskModalProps){
   const titleId = useId('title');
   const cancelIcon: IIconProps = { iconName: 'Cancel' };
 
-  const taskInitialValues = {
-    ...props.defaultValues.task,
-    comments: ""
-  }
+  // const taskInitialValues = {
+  //   ...props.defaultValues.task,
+  //   comments: ""
+  // }
 
   const getTasksForStep = () => {
-    return props.tasks && props.workflowStep ? props.tasks.filter((i:any) => i.stepKey == props.workflowStep!.name) : []
+    return props.tasks && props.workflowStep ? props.tasks.filter((i:any) => i.stepKey == props.workflowStep!.name && i.active) : []
   }
 
   const taskIsEditable = (task: SPTask) => {   
     return !task.completed && task.assignedToId && task.assignedToId.results.indexOf(_spPageContextInfo.userId) > -1
-  }
+  }  
   
-  return <>
-    <Modal
+  return <Modal
       titleAriaId={titleId}
-      isOpen={props.state.showTaskModal}
+      isOpen={props.isOpen}
       //onDismiss={props.hideModal}
       isBlocking={false}
       containerClassName={contentStyles.container}       
@@ -68,7 +66,7 @@ export function SPTaskModal(props:SPTaskModalProps){
         {props.workflowStep ? <p>{props.workflowStep.description}</p> : null}
         <Stack tokens={{childrenGap: 's1'}}>
           {getTasksForStep().map((task:SPTask, index:number) => <Stack key={index} style={taskStyle} tokens={{childrenGap: 's1'}}>
-            <Formik
+            {/* <Formik
               onSubmit={() => {}}
               initialValues={{
                 task: {
@@ -79,7 +77,7 @@ export function SPTaskModal(props:SPTaskModalProps){
               }}
               validationSchema={props.workflowStep ? props.workflowStep.validationSchema : undefined}
             >
-            {({values, handleSubmit, isValid, setValues, validateForm}) => <>
+            {({values, handleSubmit, isValid, setValues, validateForm}) => <> */}
               <Text variant="large" style={{fontWeight: 600}}>{task.taskName}</Text>              
               {!taskIsEditable(task) 
                 ? task.completed 
@@ -87,12 +85,14 @@ export function SPTaskModal(props:SPTaskModalProps){
                     <Text style={{fontWeight: 600}}>Completed By: <SPDisplayPerson userId={task.completedById}></SPDisplayPerson></Text>
                     <Text style={{fontWeight: 600}}>Completed On: {task.completedDate ? formatISODate(task.completedDate) : ""}</Text>
                     <Text style={{fontWeight: 600}}>Outcome: {task.outcome}</Text>
-                    {props.workflowStep && props.workflowStep.showCompletedForm && props.workflowStep.form 
+                    {/* 
+                      Display Custome Task form
+                      {props.workflowStep && props.workflowStep.showCompletedForm && props.workflowStep.form 
                       ? typeof props.workflowStep.form === 'function'
                         ? props.workflowStep.form(values)
                         : props.workflowStep.form 
                       : null
-                    }
+                    } */}
                     {task.comments ? <><Text style={{fontWeight: 600}}>Comments: </Text><Text>{task.comments}</Text></> : null}
                   </>
                   : <>
@@ -102,58 +102,86 @@ export function SPTaskModal(props:SPTaskModalProps){
                 : <>
                   <Text style={{fontWeight: 600}}>Assigned To</Text>
                   {task.assignedToId ? task.assignedToId.results.map((i:any, index:number) => <SPDisplayPerson key={index} userId={i}></SPDisplayPerson>) : null}
-                  {props.workflowStep && props.workflowStep.form 
+                  {/* {props.workflowStep && props.workflowStep.form 
                     ? typeof props.workflowStep.form === 'function'
                       ? props.workflowStep.form(values)
                       : props.workflowStep.form 
                     : null
-                  }
-                  <SPTextField name="task.comments" label="Comments" multiline rows={3}></SPTextField>                  
+                  } */}
+                  {/* <SPTextField name="Tasks[0].Comments" label="Comments" multiline rows={3}></SPTextField>    */}
+                  <SPTaskForm task={task}></SPTaskForm>                  
                   {props.workflowStep && props.workflowStep.outcomes ? <Stack horizontal tokens={{childrenGap: 's1'}}>
-                  {task.taskKey != state.loadingTaskKey ? props.workflowStep.outcomes.map((outcome:any,index:number) => <DefaultButton key={index} styles={{root: {height: "auto", minHeight: "30px"}}} text={outcome.name} onClick={() => _onOutcomeClick(outcome, handleSubmit, task, isValid, values, setValues, validateForm)}/>) : null}
+                  { task.taskIndex != state.loadingTaskIndex 
+                    ? props.workflowStep.outcomes.map((outcome:any,index:number) => 
+                      <DefaultButton 
+                        key={index} 
+                        styles={{root: {height: "auto", minHeight: "30px"}}} 
+                        text={outcome.name} 
+                        // onClick={() => _onOutcomeClick(outcome, handleSubmit, task, isValid, values, setValues, validateForm)}
+                        onClick={async () => await _onOutcomeClick(outcome, task)}
+                      />
+                    ) 
+                    : null
+                  }
                   </Stack> : null}
                 </>
               }  
-              {task.taskKey == state.loadingTaskKey ? <Spinner size={SpinnerSize.medium} label="Working on it..." ariaLive="assertive" labelPosition="right" /> : null}
+              {task.taskIndex == state.loadingTaskIndex ? <Spinner size={SpinnerSize.medium} label="Working on it..." ariaLive="assertive" labelPosition="right" /> : null}
               {state.error ? <MessageBar messageBarType={MessageBarType.error}>Error while completing task. <Link onClick={() => {window.alert(state.error)}}>Click here for more information.</Link></MessageBar> : null}                       
-            </>}           
-            </Formik>
+            {/* </>}           
+            </Formik> */}
           </Stack>)}          
         </Stack>        
       </div>
+    </Modal> 
 
-    </Modal>
-  </>  
-
-  async function _onOutcomeClick(outcome:any, handleSubmit:any, task:SPTask, isValid: boolean, values: any, setValues: any, validateForm: any){       
-    let error = undefined; 
-    values = {
-      ...values,
-      task:{
-        ...values.task,
-        outcome: outcome.name
-      }
+  async function _onOutcomeClick(outcome:any, task:SPTask, ){
+    let error = undefined;     
+    setState({
+      loadingTaskIndex: task.taskIndex
+    })
+    try{                      
+      await props.onOutcomeClick(outcome, task, props.hideModal, props.workflowStep)       
+      console.log("I shoudlnt see this b4 the updates.")
     }
-    setValues(values, true)    
-    handleSubmit()
-    const errors = await validateForm(values)    
-    if (errors && Object.keys(errors).length === 0 && errors.constructor === Object){
-      setState({
-        loadingTaskKey: task.taskKey
-      })
-      try{                
-        await outcome.actions(props.state, props.setState, values, props.workflowStep ? props.workflowStep.name : undefined)        
-      }
-      catch(e){
-        error = e
-      }
-      setState({
-        loadingTaskKey: undefined,
-        error
-      }) 
-      if (outcome.dismissModal && !error)
-        props.hideModal()
-    }
+    catch(e){
+      error = e
+      console.error(e)
+    }    
+    setState({
+      loadingTaskIndex: undefined,
+      error
+    }) 
+    // if (outcome.dismissModal && !error)
+    //   props.hideModal()
+    // let error = undefined; 
+    // values = {
+    //   ...values,
+    //   task:{
+    //     ...values.task,
+    //     outcome: outcome.name
+    //   }
+    // }
+    // setValues(values, true)    
+    // handleSubmit()
+    // const errors = await validateForm(values)    
+    // if (errors && Object.keys(errors).length === 0 && errors.constructor === Object){
+    //   setState({
+    //     loadingTaskKey: task.taskKey
+    //   })
+    //   try{                
+    //     await outcome.actions(props.state, props.setState, values, props.workflowStep ? props.workflowStep.name : undefined)        
+    //   }
+    //   catch(e){
+    //     error = e
+    //   }
+    //   setState({
+    //     loadingTaskKey: undefined,
+    //     error
+    //   }) 
+    //   if (outcome.dismissModal && !error)
+    //     props.hideModal()
+    // }
   }
 }
 
@@ -203,3 +231,8 @@ const iconButtonStyles = {
     color: theme.palette.neutralDark,
   },
 };
+
+const SPTaskForm = ({task}:{task:SPTask}) => {
+  const [field, meta, helpers] = useField(`Tasks[${task.taskIndex}].Comments`)
+  return <TextField {...field} label="Comments" multiline rows={3}></TextField>               
+}

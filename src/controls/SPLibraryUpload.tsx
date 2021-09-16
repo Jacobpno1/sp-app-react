@@ -1,10 +1,14 @@
 import React from 'react';
 import { DatePicker, IDatePickerStrings, mergeStyleSets, DayOfWeek, Button, IconButton, Stack, FontWeights, ActionButton, Text } from '@fluentui/react';
 import { useField } from 'formik';
-import { SharePointAttachment, SharePointAttachments } from './types';
+import { SharePointAttachment, SharePointAttachments } from '../types';
+import { useSPField } from '../hooks/useSPField';
+import { SPListContext } from '../SPList';
 
 export const SPLibraryUpload = (props: any)  => {
+  const listContext = useContext(SPListContext);
   const [field, meta, helpers] = useField(props.name);
+  //const [field, meta, helpers, spProps] = useSPField(props);  
   const error : string | undefined = meta.touched && meta.error && typeof(meta.error) == 'string' ? meta.error : undefined;
   
   function _onChange(event: React.ChangeEvent<HTMLInputElement>){    
@@ -92,4 +96,8 @@ export const SPLibraryUpload = (props: any)  => {
       {/* <pre>{field.value && JSON.stringify(field.value.filter((i:SharePointAttachment) => { return !i.__metadata.deleted }), null, 2)}</pre> */}
     </Stack>
   )
+}
+
+function useContext(SPListContext: any) {
+  throw new Error('Function not implemented.');
 }

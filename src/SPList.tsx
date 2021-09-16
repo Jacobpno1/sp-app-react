@@ -43,10 +43,11 @@ export function SPList({name, children}:SPListProps){
 
   const getFieldProps = (fieldName:string, index?:number) => {
     let fieldProps:any = {}
+    let isPersonField = false
     const field = list.fields.filter((v:any) => v.InternalName === fieldName)[0];    
     if (field){      
-      const updatedFieldName = ["User", "UserMulti"].includes(field.TypeAsString) ? `${fieldName}Id` : fieldName
-      fieldProps.name = listSchema.parent ? `${name}[${index}].${updatedFieldName}` : `${name}.${updatedFieldName}`
+      isPersonField = ["User", "UserMulti"].includes(field.TypeAsString)
+      //fieldProps.name = listSchema.parent ? `${name}[${index}].${updatedFieldName}` : `${name}.${updatedFieldName}`
       fieldProps.label = field.Title;
       if (field.TypeAsString == "Choice" && field.Choices)
         fieldProps.options = field.Choices.results.map((i:any) => ({key: i, text: i}))
@@ -54,7 +55,9 @@ export function SPList({name, children}:SPListProps){
         fieldProps.options = field.Choices.results.map((i:any) => ({key: i, text: i}))
         fieldProps.multiSelect = true
       }
-    }    
+    }  
+    const updatedFieldName = isPersonField ? `${fieldName}Id` : fieldName  
+    fieldProps.name = listSchema.parent ? `${name}[${index}].${updatedFieldName}` : `${name}.${updatedFieldName}`
     return fieldProps    
   }
   

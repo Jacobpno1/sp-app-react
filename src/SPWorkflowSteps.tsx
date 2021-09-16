@@ -71,7 +71,14 @@ const SPWorkflowStep = Radium((props:any) => {
       ":hover": {
         backgroundColor: "#106ebe"
       }
-    } as Radium.StyleRules  
+    } as Radium.StyleRules,
+    rejectedStep: {
+      color: "white",
+      backgroundColor: "#a4262c",
+      ":hover": {
+        backgroundColor: "#932227"
+      }
+    } as Radium.StyleRules,  
   }
 
   return <>
@@ -82,8 +89,8 @@ const SPWorkflowStep = Radium((props:any) => {
           horizontal 
           verticalAlign="center"
         >
-          <div style={item.name == parentProps.currentStep ? [styles.workflowStep, styles.activeStep] as Radium.StyleRootProps : styles.workflowStep}>
-            <Text style={{fontWeight: 600, color: item.name == parentProps.currentStep ? "white" : "auto"}}>
+          <div style={item.name == parentProps.currentStep ? [styles.workflowStep, parentProps.currentStepRejected ? styles.rejectedStep : styles.activeStep] as Radium.StyleRootProps : styles.workflowStep}>
+            <Text style={{fontWeight: 600, color: item.name == parentProps.currentStep ? "white" : "#323130"}}>
               {item.name}                                
               {/* {isStepAfterCurrentStep(item.name) ? "+" : null}         */}
             </Text>
