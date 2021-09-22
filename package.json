@@ -1,6 +1,6 @@
 {
   "name": "sp-app-react",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "React based Controls and Utilities for building applications in SharePoint",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
