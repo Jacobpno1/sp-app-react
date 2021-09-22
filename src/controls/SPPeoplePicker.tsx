@@ -15,6 +15,7 @@ type SPPeoplePickerProps ={
   required?: boolean
   disabled?: boolean | undefined
   readOnly?: boolean | undefined
+  onChange?: ((value?: SPPickerFieldValue | number) => void) | undefined
 }
 
 type SPPickerFieldValue = {
@@ -48,7 +49,7 @@ const suggestionProps: IBasePickerSuggestionsProps = {
   suggestionsContainerAriaLabel: 'Suggested contacts'
 };
 
-export const SPPeoplePicker: React.FC<SPPeoplePickerProps> = ({name, label, multiple, required, disabled, readOnly}) => {
+export const SPPeoplePicker: React.FC<SPPeoplePickerProps> = ({name, label, multiple, required, disabled, readOnly, onChange}) => {
   // const listContext = useContext(SPListContext);
   // const listProps = (listContext && listContext.getFieldProps && name) ? listContext.getFieldProps(name.replace("Id","")) : {}
   
@@ -157,17 +158,17 @@ export const SPPeoplePicker: React.FC<SPPeoplePickerProps> = ({name, label, mult
         // value.results = multiple ? items.map(item => {
         //   return item.Id ? item.Id : 0
         // }) : items[0].Id 
-        setValue(
-          multiple ? {
-            "__metadata": {
-              "type": "Collection(Edm.Int32)"
-            },
-            "results": items.map(item => {
-              return item.Id ? item.Id : 0
-            })
-          } : (items[0]) ? items[0].Id : null
-        );
+        const value =  multiple ? {
+          "__metadata": {
+            "type": "Collection(Edm.Int32)"
+          },
+          "results": items.map(item => {
+            return item.Id ? item.Id : 0
+          })
+        } : (items[0]) ? items[0].Id : null
+        setValue(value);        
         setSelectedPersonas(items);        
+        if (onChange) onChange(value)
       })    
   }
 

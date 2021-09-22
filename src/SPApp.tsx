@@ -305,7 +305,7 @@ export function SPApp({spAppSchema, formID, children}: SPAppProps){
                     else newItem = {...item, ID: (await pnpLists.getByTitle(listName).items.add(resetNullValues(newItem))).data.ID}
                     
                     if (newItem.AttachmentFiles && newItem.AttachmentFiles.results && newItem.ID)
-                      newItem.AttachmentFiles = {results: await saveAttachments(newItem.AttachmentFiles.results, pnpLists.getByTitle(listName).items.getById(item.ID))}  
+                      newItem.AttachmentFiles = {results: await saveAttachments(newItem.AttachmentFiles.results, pnpLists.getByTitle(listName).items.getById(newItem.ID))}  
                     
                     return newItem
                   }))).filter(item => item.__metadata && !item.__metadata.deleted || !item.__metadata)] //filter deleted items from returned array
